@@ -3,6 +3,8 @@ import azure.functions as func
 import logging
 import urllib.parse
 
+from handlers.slack import handle_slack_message
+
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
 
@@ -44,7 +46,9 @@ def slack_send_message(req: func.HttpRequest) -> func.HttpResponse:
 
         logging.info(f"Username - {username} - Message - {message_body}")
 
-        response_message = response_message + username
+        response_handle_slack_message = handle_slack_message(username, message_body)
+
+        response_message = response_handle_slack_message
     except Exception as e:
         logging.error(f"Error processing request: {e}")
         response_message = "Error processing request."
