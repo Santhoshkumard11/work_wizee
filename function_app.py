@@ -3,7 +3,7 @@ import azure.functions as func
 import logging
 import urllib.parse
 
-from handlers.slack import handle_slack_message
+from handler_slack import handle_slack_message
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 

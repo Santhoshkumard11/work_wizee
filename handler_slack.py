@@ -1,4 +1,4 @@
-from utils.slack import get_user_id_from_slack, send_message_to_slack
+from utils_slack import get_user_id_from_slack, send_message_to_slack
 
 
 def handle_slack_message(username, message):
