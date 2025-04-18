@@ -1,0 +1,115 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "OpenAPI definition",
+        "version": "v0"
+    },
+    "servers": [
+        {
+            "url": "https://coralcloud-collage-action-b6c544270bc6.herokuapp.com",
+            "description": "Generated server url"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Collage API",
+            "description": "Generates Collages"
+        },
+        {
+            "name": "Collage API",
+            "description": "Downloads Collages"
+        }
+    ],
+    "paths": {
+        "/api/generate": {
+            "post": {
+                "tags": [
+                    "Collage API"
+                ],
+                "summary": "Generate a collage",
+                "description": "Generates a collage based on the provided quote and image URLs and returns the download URL.",
+                "operationId": "generate",
+                "parameters": [
+                    {
+                        "name": "quote",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "Oh my goodness those sunsets!"
+                        },
+                        "example": "Oh my goodness those sunsets!"
+                    },
+                    {
+                        "name": "experienceImageURLs",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "https://s3-us-west-2.amazonaws.com/dev-or-devrl-s3-bucket/sample-apps/coral-clouds/sjahfb9mmbzzyogf87fk.jpg,https://s3-us-west-2.amazonaws.com/dev-or-devrl-s3-bucket/sample-apps/coral-clouds/mukt3fxxtxz6fgzltiv9.png,https://s3-us-west-2.amazonaws.com/dev-or-devrl-s3-bucket/sample-apps/coral-clouds/ugpauqyr6k4ykemyumuu.png"
+                        },
+                        "example": "https://s3-us-west-2.amazonaws.com/dev-or-devrl-s3-bucket/sample-apps/coral-clouds/sjahfb9mmbzzyogf87fk.jpg,https://s3-us-west-2.amazonaws.com/dev-or-devrl-s3-bucket/sample-apps/coral-clouds/mukt3fxxtxz6fgzltiv9.png,https://s3-us-west-2.amazonaws.com/dev-or-devrl-s3-bucket/sample-apps/coral-clouds/ugpauqyr6k4ykemyumuu.png"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Download URL for the generated collage",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "https://coralcloud-collage-action.herokuapp.com/download/d938eba6-100b-426a-adf2-c9bec87412b0.png"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "error:No valid images were loaded."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/download/{id}": {
+            "get": {
+                "tags": [
+                    "Collage API"
+                ],
+                "summary": "Download a collage",
+                "description": "Downloads a collage created with the /api/generate operation.",
+                "operationId": "downloadFile",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {}
+}

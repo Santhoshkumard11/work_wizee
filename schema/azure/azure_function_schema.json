@@ -1,0 +1,72 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "OpenAPI definition",
+        "version": "v0"
+    },
+    "servers": [
+        {
+            "url": "https://workwizee.azurewebsites.net/api",
+            "description": "API documentation for Workwizee's Slack integrations"
+        }
+    ],
+    "paths": {
+        "/slack_send_message": {
+            "post": {
+                "tags": [
+                    "Slack API"
+                ],
+                "summary": "Send a message via Slack",
+                "description": "Send a message via Slack",
+                "operationId": "send_slack_message",
+                "parameters": [
+                    {
+                        "name": "username",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "sandyinspires"
+                        },
+                        "example": "sandyinspires"
+                    },
+                    {
+                        "name": "slack_message",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "Welcome to Slack!"
+                        },
+                        "example": "Welcome to Slack!"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "response from Slack",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "ok:Message sent successfully."
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid username",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "error:The user name is not valid."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "components": {}
+    }
+}

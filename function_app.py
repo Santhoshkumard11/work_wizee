@@ -1,6 +1,7 @@
 import json
 import azure.functions as func
 import logging
+import urllib.parse
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
@@ -30,13 +31,25 @@ def slack_search_userid(req: func.HttpRequest) -> func.HttpResponse:
 @app.route(route="slack_send_message", methods=["POST"])
 def slack_send_message(req: func.HttpRequest) -> func.HttpResponse:
     logging.info("Slack Send Message HTTP trigger function processed a request.")
+
+    response_message = "Slack message sent successfully to "
     try:
-        req_body = req.get_json()
+        req_body = req.get_body().decode("utf-8")
         logging.info(f"body - {req_body}")
-    except ValueError:
-        pass
+
+        params = urllib.parse.parse_qs(req_body)
+
+        username = params.get("username", [""])[0]
+        message_body = params.get("slack_message", [""])[0]
+
+        logging.info(f"Username - {username} - Message - {message_body}")
+
+        response_message = response_message + username
+    except Exception as e:
+        logging.error(f"Error processing request: {e}")
+        response_message = "Error processing request."
 
     return func.HttpResponse(
-        "Slack message sent successfully.",
+        response_message,
         status_code=200,
     )

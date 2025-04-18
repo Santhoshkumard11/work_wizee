@@ -1,0 +1,82 @@
+openapi: 3.0.3
+info:
+  title: Workwizee API
+  description: API documentation for Workwizee's Slack integrations
+  version: 1.0.0
+servers:
+  - url: https://workwizee.azurewebsites.net/api
+paths:
+  /slack_send_message:
+    post:
+      summary: 
+      operationId: sendSlackMessage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  example: U123456
+                message:
+                  type: string
+                  example: Hello from Workwizee!
+              required:
+                - userId
+                - message
+      responses:
+        '200':
+          description: Message sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+        '400':
+          description: Bad request
+  /slack/checkuser:
+    get:
+      summary: Check if a Slack user exists
+      operationId: checkSlackUser
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: string
+            example: U123456
+      responses:
+        '200':
+          description: User status returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  exists:
+                    type: boolean
+                    example: true
+        '404':
+          description: User not found
+  /health:
+    get:
+      summary: check if the service is up
+      operationId: healthCheck
+      responses:
+        '200':
+          description: Service is up
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  exists:
+                    type: boolean
+                    example: true
+        '404':
+          description: not found
