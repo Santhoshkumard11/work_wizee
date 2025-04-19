@@ -3,6 +3,8 @@ import os
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
+from constants import WORKWIZEE_BOT_USER_ID
+
 SLACK_BOT_ACCESS_TOKEN = os.environ.get("SLACK_BOT_ACCESS_TOKEN")
 SLACK_USER_ACCESS_TOKEN = os.environ.get("SLACK_USER_ACCESS_TOKEN")
 
@@ -32,7 +34,7 @@ def send_message_to_slack(user_id: str, message: str, client_to_use="bot_client"
         raise Exception(f"Slack API error: {e.response['error']}")
 
 
-def get_user_id_from_slack(user_identifier: str):
+def get_user_id_from_username(user_identifier: str):
     """
     Retrieves a Slack user ID from a username or email.
 
@@ -60,7 +62,7 @@ def get_user_id_from_slack(user_identifier: str):
                         or user.get("real_name").split(" ")[0].lower()
                         == user_identifier
                     ):
-                        logging.info(f"User found: {user}")
+                        logging.info(f"User found: {user.get('real_name')}")
                         return user.get("id")
                 raise Exception(f"User with username {user_identifier} not found.")
             else:
@@ -113,4 +115,60 @@ def get_usergroup_id_by_name(usergroup_name: str):
         else:
             raise Exception(f"Failed to fetch user groups: {response['error']}")
     except SlackApiError as e:
+        raise Exception(f"Slack API error: {e.response['error']}")
+
+
+def create_slack_channel(channel_name, channel_visibility):
+    """
+    Creates a Slack channel with the specified name and visibility.
+
+    Args:
+        channel_name (str): The name of the Slack channel.
+        channel_visibility (str): The visibility of the channel (private or public).
+
+    Returns:
+        str: The ID of the created Slack channel.
+    """
+    try:
+        if channel_visibility.lower() == "private":
+            response = bot_client.conversations_create(
+                name=channel_name, is_private=True
+            )
+        else:
+            response = bot_client.conversations_create(name=channel_name)
+
+        if response["ok"]:
+            return response["channel"]["id"]
+        else:
+            raise Exception(f"Failed to create channel: {response['error']}")
+    except SlackApiError as e:
+        logging.error(
+            f"Error creating {channel_name} with {channel_visibility} visibility : {e.response['error']}"
+        )
+        raise Exception(f"Slack API error: {e.response['error']}")
+    except Exception as e:
+        logging.error(f"Error creating channel: {e}")
+        raise Exception(f"Failed to create channel: {e}")
+
+
+def add_users_to_channel(channel_id, list_of_user_id):
+    """
+    Adds users to a Slack channel.
+
+    Args:
+        channel_id (str): The ID of the Slack channel.
+        list_of_user_id (list): A list of user IDs to add to the channel.
+    """
+    list_of_user_id = ",".join(list_of_user_id)
+    logging.info(f"Adding users to channel {channel_id}: {list_of_user_id}")
+    try:
+        response = bot_client.conversations_invite(
+            channel=channel_id, users=list_of_user_id
+        )
+        if not response["ok"]:
+            raise Exception(f"Failed to add users to channel: {response['error']}")
+        else:
+            logging.info(f"Users added successfully to channel {channel_id}")
+    except SlackApiError as e:
+        logging.error(f"Add Users to Channel: {e.response['error']}")
         raise Exception(f"Slack API error: {e.response['error']}")

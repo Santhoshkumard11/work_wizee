@@ -77,6 +77,92 @@
                 }
             }
         },
+        "/slack_create_channel_for_users": {
+            "post": {
+                "tags": [
+                    "Slack API"
+                ],
+                "summary": "Send a message via Slack",
+                "description": "Send a message via Slack",
+                "operationId": "slack_create_channel_for_users",
+                "parameters": [
+                    {
+                        "name": "list_of_users",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "sandyinspires,aishwarya"
+                        },
+                        "example": "sandyinspires,aishwarya"
+                    },
+                    {
+                        "name": "individual_user_message",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "Added you to a new channel"
+                        },
+                        "example": "Added you to a new channel"
+                    },
+                    {
+                        "name": "channel_name",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "new-channel-name"
+                        },
+                        "example": "new-channel-name"
+                    },
+                    {
+                        "name": "channel_visibility",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "public"
+                        },
+                        "example": "public"
+                    },
+                    {
+                        "name": "channel_first_message",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "Create this channel to discussion about the ongoing issue"
+                        },
+                        "example": "Create this channel to discussion about the ongoing issue"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "response from Slack",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "ok:Message sent successfully."
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid list_of_users",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "error:The user name is not valid."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "components": {}
     }
 }

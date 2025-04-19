@@ -3,7 +3,7 @@ import azure.functions as func
 import logging
 import urllib.parse
 
-from handler_slack import handle_slack_message
+from handler_slack import handle_slack_create_channel_for_users, handle_slack_message
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
@@ -13,19 +13,42 @@ def health(req: func.HttpRequest) -> func.HttpResponse:
     return func.HttpResponse("OK", status_code=200)
 
 
-@app.route(route="slack_search_userid", methods=["POST"])
-def slack_search_userid(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info("Slack Search User ID HTTP trigger function processed a request.")
+@app.route(route="slack_create_channel_for_users", methods=["POST"])
+def slack_create_channel_for_users(req: func.HttpRequest) -> func.HttpResponse:
+    logging.info(
+        "Slack create channel for users HTTP trigger function processed a request."
+    )
+    response_message = "Slack channel created successfully for "
     try:
-        req_body = req.get_json()
+        req_body = req.get_body().decode("utf-8")
         logging.info(f"body - {req_body}")
-    except ValueError:
-        pass
 
-    return_response = json.dumps({"user_id": "U123456"})
+        params = urllib.parse.parse_qs(req_body)
+
+        list_of_users = params.get("list_of_users", [""])[0]
+        individual_user_message = params.get("individual_user_message", [""])[0]
+        channel_name = params.get("channel_name", [""])[0]
+        # default channel visibility is private
+        channel_visibility = params.get("channel_visibility", ["private"])[0]
+        channel_first_message = params.get(
+            "channel_first_message",
+            ["Create this channel to discussion about the ongoing issue"],
+        )[0]
+
+        response_message = handle_slack_create_channel_for_users(
+            list_of_users,
+            individual_user_message,
+            channel_name,
+            channel_visibility,
+            channel_first_message,
+        )
+
+    except Exception as e:
+        logging.error(f"Error processing request: {e}")
+        response_message = "Error processing request."
 
     return func.HttpResponse(
-        return_response,
+        response_message,
         status_code=200,
     )
 

@@ -1,0 +1,24 @@
+Instruction
+This action will help users to create a slack channel and send a first channel message.
+
+Inputs
+
+List Of Users
+
+This should be list of user names in comma separated format
+
+Individual User Message
+
+This should be what the individual users who are getting added to the slack channel would receive.
+
+Channel name
+
+This will be the name of the slack channel. It can include underscore or hypens.
+
+Channel Visibility
+
+This should be either 'public' or 'private'
+
+Channel First Message
+
+The initial message to be send to the channel after the channel is created. This should be generated based on the context of the intension to create the channel, this should be to discussion an issue in production, a brainstorming session or planning for a surprise party
