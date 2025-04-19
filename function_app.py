@@ -43,10 +43,17 @@ def slack_send_message(req: func.HttpRequest) -> func.HttpResponse:
 
         username = params.get("username", [""])[0]
         message_body = params.get("slack_message", [""])[0]
+        is_user_group_send = (
+            params.get("is_user_group_send", ["false"])[0].lower() == "true"
+        )
 
-        logging.info(f"Username - {username} - Message - {message_body}")
+        logging.info(
+            f"Username - {username} - Message - {message_body} - is_user_group_send - {is_user_group_send}"
+        )
 
-        response_handle_slack_message = handle_slack_message(username, message_body)
+        response_handle_slack_message = handle_slack_message(
+            username, message_body, is_user_group_send
+        )
 
         response_message = response_handle_slack_message
     except Exception as e:

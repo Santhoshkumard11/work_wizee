@@ -1,0 +1,14 @@
+Instructions
+
+
+Inputs
+
+username
+
+Slack user ID or user name or email address for the person who will receive the direct message.
+
+Slack Message
+
+Message text to be sent to the user or the user group
+
+

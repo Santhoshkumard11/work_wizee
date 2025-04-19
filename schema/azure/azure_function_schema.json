@@ -39,6 +39,16 @@
                             "example": "Welcome to Slack!"
                         },
                         "example": "Welcome to Slack!"
+                    },
+                    {
+                        "name": "is_user_group_send",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "false"
+                        },
+                        "example": "false"
                     }
                 ],
                 "responses": {
