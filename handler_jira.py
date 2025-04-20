@@ -47,9 +47,9 @@ def handle_create_jira_ticket(
         logging.info(f"JIRA ticket created successfully: {ticket_key}")
         if not ticket_key:
             logging.error("Failed to create JIRA ticket.")
-            return message
+            return "Error while creating JIRA ticket - " + message
 
         return ticket_key
     except Exception as e:
         logging.error(f"Error creating JIRA ticket: {e}")
-        return message
+        return "Error while creating JIRA ticket "

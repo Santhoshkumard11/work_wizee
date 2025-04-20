@@ -38,11 +38,14 @@ def jira_create_ticket(req: func.HttpRequest) -> func.HttpResponse:
             summary, description, assignee, story_points, issue_type, priority
         )
 
-        response_message = response_message + jira_ticket
+        response_message = (
+            response_message
+            + f"[{jira_ticket}](https://sandyinspires.atlassian.net/browse/{jira_ticket})"
+        )
 
     except Exception as e:
         logging.error(f"Error processing request: {e}")
-        response_message = "Error while trying to create Jira ticket"
+        response_message = f"Error while trying to create Jira ticket - {e}"
 
     return func.HttpResponse(
         response_message,

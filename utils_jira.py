@@ -48,6 +48,19 @@ def create_jira_ticket(
         "customfield_10016": story_points,
         "priority": {"name": priority},
     }
+
+    # if it's a bug remove the priority field
+    if issue_type == "Bug":
+        issue_dict.pop("priority", None)
+        logging.info(f"Removing priority field for issue type: {issue_type}")
+
+    logging.info(
+        f"Creating JIRA ticket with summary: {summary}, description: {description}"
+    )
+    logging.info(
+        f"Assignee: {user_id}, Story Points: {story_points}, Issue Type: {issue_type}, Priority: {priority}"
+    )
+
     issue = jira_client.create_issue(fields=issue_dict)
     return issue.key, "Ticket created successfully"
 
