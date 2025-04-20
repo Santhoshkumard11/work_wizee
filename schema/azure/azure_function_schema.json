@@ -248,6 +248,86 @@
                 }
             }
         },
+        "/jira_add_comment": {
+            "post": {
+                "tags": [
+                    "Jira API"
+                ],
+                "summary": "Add a comment to Jira ticket",
+                "description": "Add a comment to Jira ticket",
+                "operationId": "jira_add_comment",
+                "parameters": [
+                    {
+                        "name": "ticket_key",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "WOWZEE-6"
+                        },
+                        "example": "WOWZEE-6"
+                    },
+                    {
+                        "name": "comment",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "This has been discussed and closed"
+                        },
+                        "example": "This has been discussed and closed"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "response from Jira API",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "ok:Comment added to Jira ticket successfully"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/jira_get_latest_comments": {
+            "post": {
+                "tags": [
+                    "Jira API"
+                ],
+                "summary": "Add a comment to Jira ticket",
+                "description": "Add a comment to Jira ticket",
+                "operationId": "jira_get_latest_comments",
+                "parameters": [
+                    {
+                        "name": "ticket_key",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "WOWZEE-6"
+                        },
+                        "example": "WOWZEE-6"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "response from Jira API",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "ok:Comment added to Jira ticket successfully"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "components": {}
     }
 }

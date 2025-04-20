@@ -2,6 +2,8 @@ import logging
 from jira import JIRA
 import os
 
+from constants import DEFAULT_JIRA_COMMENT_PULL_LIMIT, DEFAULT_JIRA_PROJECT_KEY
+
 # Initialize JIRA client
 jira_server = os.environ.get("JIRA_SERVER")
 jira_token = os.environ.get("JIRA_ACCESS_TOKEN")
@@ -107,7 +109,19 @@ def comment_on_jira_ticket(ticket_key: str, comment: str):
         ticket_key (str): The key of the JIRA ticket.
         comment (str): The comment to add.
     """
-    jira_client.add_comment(ticket_key, comment)
+
+    try:
+        # check if the ticket is a valid ticket
+        if not ticket_key.startswith(DEFAULT_JIRA_PROJECT_KEY):
+            logging.error(f"Invalid ticket key: {ticket_key}")
+            return None
+
+        jira_client.add_comment(ticket_key, comment)
+        logging.info(f"Comment added to ticket {ticket_key}: {comment}")
+        return "Comment added successfully"
+    except Exception as e:
+        logging.error(f"Error adding comment to ticket {ticket_key}: {e}")
+        return None
 
 
 def get_latest_comment_from_jira(ticket_key: str):
@@ -120,11 +134,24 @@ def get_latest_comment_from_jira(ticket_key: str):
     Returns:
         str: The latest comment.
     """
-    comments = jira_client.comments(ticket_key)
-    if comments:
-        return comments[-1].body
-    return None
 
+    try:
+
+        # check if the ticket is a valid ticket
+        if not ticket_key.startswith(DEFAULT_JIRA_PROJECT_KEY):
+            logging.error(f"Invalid ticket key: {ticket_key}")
+            return None
+
+        comments = jira_client.comments(ticket_key)[-DEFAULT_JIRA_COMMENT_PULL_LIMIT:]
+
+        comments_body = [comment.body for comment in comments]
+        # get the last three comments
+        if comments:
+            return "\n".join(comments_body)
+        return None
+    except Exception as e:
+        logging.error(f"Error retrieving comments for ticket {ticket_key}: {e}")
+        return None
 
 def get_user_details(username: str):
     """
