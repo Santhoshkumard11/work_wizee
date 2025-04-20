@@ -1,8 +1,8 @@
-import json
 import azure.functions as func
 import logging
 import urllib.parse
 
+from handler_jira import handle_create_jira_ticket
 from handler_slack import handle_slack_create_channel_for_users, handle_slack_message
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
@@ -11,6 +11,43 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 @app.route(route="health")
 def health(req: func.HttpRequest) -> func.HttpResponse:
     return func.HttpResponse("OK", status_code=200)
+
+
+@app.route(route="jira_create_ticket", methods=["POST"])
+def jira_create_ticket(req: func.HttpRequest) -> func.HttpResponse:
+    logging.info("Jira create ticket HTTP trigger function processed a request.")
+    response_message = "Jira ticket created successfully - "
+    try:
+        req_body = req.get_body().decode("utf-8")
+        logging.info(f"body - {req_body}")
+
+        params = urllib.parse.parse_qs(req_body)
+
+        summary = params.get("summary", [""])[0]
+        description = params.get("description", [""])[0]
+        assignee = params.get("assignee", [""])[0]
+        # default story points is 3
+        story_points = params.get("story_points", ["3"])[0]
+        issue_type = params.get(
+            "issue_type",
+            ["Task"],
+        )[0]
+        priority = params.get("priority", [""])[0]
+
+        jira_ticket = handle_create_jira_ticket(
+            summary, description, assignee, story_points, issue_type, priority
+        )
+
+        response_message = response_message + jira_ticket
+
+    except Exception as e:
+        logging.error(f"Error processing request: {e}")
+        response_message = "Error while trying to create Jira ticket"
+
+    return func.HttpResponse(
+        response_message,
+        status_code=200,
+    )
 
 
 @app.route(route="slack_create_channel_for_users", methods=["POST"])

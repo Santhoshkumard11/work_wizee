@@ -163,6 +163,91 @@
                 }
             }
         },
+        "/jira_create_ticket": {
+            "post": {
+                "tags": [
+                    "Jira API"
+                ],
+                "summary": "Create a Jira ticket",
+                "description": "Create a Jira ticket",
+                "operationId": "jira_create_ticket",
+                "parameters": [
+                    {
+                        "name": "summary",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "what is this ticket about in brief"
+                        },
+                        "example": "what is this ticket about in brief"
+                    },
+                    {
+                        "name": "description",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "What is this ticket about in detail"
+                        },
+                        "example": "What is this ticket about in detail"
+                    },
+                    {
+                        "name": "assignee",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "aishwarya"
+                        },
+                        "example": "aishwarya"
+                    },
+                    {
+                        "name": "story_points",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "1"
+                        },
+                        "example": "1"
+                    },
+                    {
+                        "name": "issue_type",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "Type of issue, e.g., Bug, Task, Story"
+                        },
+                        "example": "Type of issue, e.g., Bug, Task, Story"
+                    },
+                    {
+                        "name": "priority",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "Medium"
+                        },
+                        "example": "Medium"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "response from Jira API",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "ok:Jira ticket created successfully"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "components": {}
     }
 }
