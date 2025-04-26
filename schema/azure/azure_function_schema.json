@@ -328,6 +328,71 @@
                 }
             }
         },
+        "/bitbucket_create_pr": {
+            "post": {
+                "tags": [
+                    "Bitbucket API"
+                ],
+                "summary": "Create a bitbucket pull request",
+                "description": "Create a bitbucket pull request",
+                "operationId": "bitbucket_create_pr",
+                "parameters": [
+                    {
+                        "name": "title",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "Adding a new feature"
+                        },
+                        "example": "Adding a new feature"
+                    },
+                    {
+                        "name": "description",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "This feature will help us scale better"
+                        },
+                        "example": "This feature will help us scale better"
+                    },
+                    {
+                        "name": "source_branch",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "WOWZEE-6"
+                        },
+                        "example": "WOWZEE-6"
+                    },
+                    {
+                        "name": "target_branch",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "DEV"
+                        },
+                        "example": "DEV"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "response from Bitbucket API",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "ok:Pull Request created successfully"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "components": {}
     }
 }

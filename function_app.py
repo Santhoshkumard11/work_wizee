@@ -2,6 +2,7 @@ import azure.functions as func
 import logging
 import urllib.parse
 
+from handler_bitbucket import handle_create_pr_to_branches
 from handler_jira import (
     handle_create_jira_ticket,
     handle_get_latest_comments,
@@ -15,6 +16,97 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 @app.route(route="health")
 def health(req: func.HttpRequest) -> func.HttpResponse:
     return func.HttpResponse("OK", status_code=200)
+
+
+@app.route(route="bitbucket_create_pr", methods=["POST"])
+def bitbucket_create_pr(req: func.HttpRequest) -> func.HttpResponse:
+    logging.info("Bitbucket create PR HTTP trigger function processed a request.")
+    response_message = "Bitbucket PR created successfully - "
+    try:
+        req_body = req.get_body().decode("utf-8")
+        logging.info(f"body - {req_body}")
+
+        params = urllib.parse.parse_qs(req_body)
+
+        source_branch = params.get("source_branch", [""])[0]
+        target_branch = params.get("target_branch", [""])[0].upper()
+        title = params.get("title", [""])[0]
+        description = params.get("description", [""])[0]
+
+        logging.info(
+            f"Source Branch - {source_branch} - Title - {title} - Description - {description} - Target Branch - {target_branch}"
+        )
+
+        pr_link = handle_create_pr_to_branches(
+            source_branch,
+            target_branch,
+            title,
+            description,
+        )
+
+        response_message = response_message + f"PR link - {pr_link}."
+
+    except Exception as e:
+        logging.error(f"Error processing request: {e}")
+        response_message = f"Error while trying to create Bitbucket PR - {e}"
+
+    return func.HttpResponse(
+        response_message,
+        status_code=200,
+    )
+
+
+@app.route(route="bitbucket_get_open_pr", methods=["POST"])
+def bitbucket_get_open_pr(req: func.HttpRequest) -> func.HttpResponse:
+    logging.info("Bitbucket get open PR HTTP trigger function processed a request.")
+    response_message = "Bitbucket open PR - "
+    try:
+        req_body = req.get_body().decode("utf-8")
+        logging.info(f"body - {req_body}")
+
+        params = urllib.parse.parse_qs(req_body)
+
+        source_branch = params.get("source_branch", [""])[0]
+
+        logging.info(f"Source Branch - {source_branch}")
+
+        response_message = handle_get_latest_comments(source_branch)
+
+    except Exception as e:
+        logging.error(f"Error processing request: {e}")
+        response_message = f"Error while trying to get open Bitbucket PR - {e}"
+
+    return func.HttpResponse(
+        response_message,
+        status_code=200,
+    )
+
+
+@app.route(route="bitbucket_comment_on_pr", methods=["POST"])
+def bitbucket_comment_on_pr(req: func.HttpRequest) -> func.HttpResponse:
+    logging.info("Bitbucket comment on PR HTTP trigger function processed a request.")
+    response_message = "Bitbucket PR comment added successfully - "
+    try:
+        req_body = req.get_body().decode("utf-8")
+        logging.info(f"body - {req_body}")
+
+        params = urllib.parse.parse_qs(req_body)
+
+        pr_id = params.get("pr_id", [""])[0]
+        comment = params.get("comment", [""])[0]
+
+        logging.info(f"PR ID - {pr_id} - Comment - {comment}")
+
+        response_message = handle_jira_add_comment(pr_id, comment)
+
+    except Exception as e:
+        logging.error(f"Error processing request: {e}")
+        response_message = f"Error while trying to add comment to Bitbucket PR - {e}"
+
+    return func.HttpResponse(
+        response_message,
+        status_code=200,
+    )
 
 
 @app.route(route="jira_add_comment", methods=["POST"])
