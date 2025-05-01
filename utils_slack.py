@@ -64,8 +64,10 @@ def get_user_id_from_username(user_identifier: str):
                     ):
                         logging.info(f"User found: {user.get('real_name')}")
                         return user.get("id")
+                logging.error("Can't find user")
                 raise Exception(f"User with username {user_identifier} not found.")
             else:
+                logging.error("Error fetching user list")
                 raise Exception(f"Failed to fetch user list: {response['error']}")
     except SlackApiError as e:
         raise Exception(f"Slack API error: {e.response['error']}")

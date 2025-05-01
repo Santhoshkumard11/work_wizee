@@ -61,6 +61,7 @@ def handle_slack_create_channel_for_users(
 
         return f"Channel '{channel_name}' created successfully with visibility '{channel_visibility}'."
     except Exception as e:
+        logging.exception(f"Error creating channel: {e}")
         return f"Error creating channel: {e}"
 
 

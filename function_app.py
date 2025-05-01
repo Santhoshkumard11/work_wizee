@@ -26,12 +26,27 @@ def bitbucket_create_pr(req: func.HttpRequest) -> func.HttpResponse:
         req_body = req.get_body().decode("utf-8")
         logging.info(f"body - {req_body}")
 
-        params = urllib.parse.parse_qs(req_body)
+        try:
+            print(f"Trying to print the params - {req.params.items()}")
+        except Exception as e:
+            logging.info(f"Error while trying to print the params - {e}")
+            pass
 
-        source_branch = params.get("source_branch", [""])[0]
-        target_branch = params.get("target_branch", [""])[0].upper()
-        title = params.get("title", [""])[0]
-        description = params.get("description", [""])[0]
+        if req_body == "":
+            logging.info(
+                "Params are not coming in the body, trying to get from query params"
+            )
+            params = req.params
+            source_branch = params.get("source_branch", [""])
+            target_branch = params.get("target_branch", [""]).upper()
+            title = params.get("title", [""])
+            description = params.get("description", [""])
+        else:
+            params = urllib.parse.parse_qs(req_body)
+            source_branch = params.get("source_branch", [""])[0]
+            target_branch = params.get("target_branch", [""])[0].upper()
+            title = params.get("title", [""])[0]
+            description = params.get("description", [""])[0]
 
         logging.info(
             f"Source Branch - {source_branch} - Title - {title} - Description - {description} - Target Branch - {target_branch}"
@@ -144,9 +159,15 @@ def jira_get_latest_comments(req: func.HttpRequest) -> func.HttpResponse:
         req_body = req.get_body().decode("utf-8")
         logging.info(f"body - {req_body}")
 
-        params = urllib.parse.parse_qs(req_body)
-
-        ticket_key = params.get("ticket_key", [""])[0]
+        if req_body == "":
+            logging.info(
+                "Params are not coming in the body, trying to get from query params"
+            )
+            params = req.params
+            ticket_key = params.get("ticket_key", [""])
+        else:
+            params = urllib.parse.parse_qs(req_body)
+            ticket_key = params.get("ticket_key", [""])[0]
 
         response_message = handle_get_latest_comments(ticket_key)
 
@@ -170,18 +191,29 @@ def jira_create_ticket(req: func.HttpRequest) -> func.HttpResponse:
         req_body = req.get_body().decode("utf-8")
         logging.info(f"body - {req_body}")
 
-        params = urllib.parse.parse_qs(req_body)
-
-        summary = params.get("summary", [""])[0]
-        description = params.get("description", [""])[0]
-        assignee = params.get("assignee", [""])[0]
-        # default story points is 3
-        story_points = params.get("story_points", ["3"])[0]
-        issue_type = params.get(
-            "issue_type",
-            ["Task"],
-        )[0]
-        priority = params.get("priority", [""])[0]
+        if req_body == "":
+            logging.info(
+                "Params are not coming in the body, trying to get from query params"
+            )
+            params = req.params
+            summary = params.get("summary", [""])
+            description = params.get("description", [""])
+            assignee = params.get("assignee", [""])
+            story_points = params.get("story_points", [""])
+            issue_type = params.get("issue_type", ["Task"])
+            priority = params.get("priority", [""])
+        else:
+            params = urllib.parse.parse_qs(req_body)
+            summary = params.get("summary", [""])[0]
+            description = params.get("description", [""])[0]
+            assignee = params.get("assignee", [""])[0]
+            # default story points is 3
+            story_points = params.get("story_points", ["3"])[0]
+            issue_type = params.get(
+                "issue_type",
+                ["Task"],
+            )[0]
+            priority = params.get("priority", [""])[0]
 
         jira_ticket = handle_create_jira_ticket(
             summary, description, assignee, story_points, issue_type, priority

@@ -145,6 +145,8 @@ def get_latest_comment_from_jira(ticket_key: str):
         comments = jira_client.comments(ticket_key)[-DEFAULT_JIRA_COMMENT_PULL_LIMIT:]
 
         comments_body = [comment.body for comment in comments]
+        logging.info(f"Latest comments for ticket {ticket_key}: {comments_body}")
+
         # get the last three comments
         if comments:
             return "\n".join(comments_body)
